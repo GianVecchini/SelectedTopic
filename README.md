@@ -107,9 +107,9 @@ Timbre-based Instrument Modeling for Balanced Recognition and Estimation.
             - *False Negative (FN)*: System says class \( c \) is absent; reference says it's present.
         For a good visualization can be used a multiclass Confusion Matrix, is square matrix where rows are actual classes and columns are predicted classes. Each cell \( (i, j) \) indicates the number of examples with true label i predicted as class j.
         - Derived Metrics: from TP, TN, FP, and FN, we can calculate:
-            - *Recall / Sensitivity / True Positive Rate (TPR)*:
+            - *Recall / Sensitivity / True Positive Rate (TPR)*: proportion of true positives among actual positives.
             $$ \text{Recall} = \frac{TP}{TP + FN} $$
-            - *Precision*:
+            - *Precision*:  proportion of true positives among predicted positives.
             $$
             \text{Precision} = \frac{TP}{TP + FP}
             $$
@@ -125,10 +125,11 @@ Timbre-based Instrument Modeling for Balanced Recognition and Estimation.
             $$
             \text{Accuracy} = \frac{TP + TN}{TP + TN + FP + FN}
             $$
-            - *F1 Score (F1)*: is the harmonic mean of precision and recall. Better for imbalanced datasets. Assumes equal importance of precision and recall.
+            - *F1 Score (F1)*: is the harmonic mean of precision and recall. Better for imbalanced datasets. Assumes equal importance of precision and recall. harmonic mean of precision and recall.
             $$
             F1 = 2 \cdot \frac{\text{Precision} \cdot \text{Recall}}{\text{Precision} + \text{Recall}}
             $$
+            - *Support*: number of samples for each class.
         -  Averaging in Multiclass Scenarios
             - **Micro-Averaging**:
                 - Aggregates TP, FP, FN **globally**.
@@ -148,9 +149,8 @@ Timbre-based Instrument Modeling for Balanced Recognition and Estimation.
     - **ROC Curve (Receiver Operating Characteristic)**: plots the True Positive Rate (Recall) against the False Positive Rate (FPR)for various threshold values. Good for binary classification problems and not easily generalizable to multiclass tasks.
 
 ## Pipeline
-
 1) Import audio data. Use panda to prepare the dataframe.
-2) Import associated annotations. Use df["label"].
+2) Import associated annotations. Use df["label"]. Check if the dataset is balanced by plotting the histogram containing the number of samples for each class.
 3) Normalize the data as needed:
     - Low pass filter
     - Apply a windowing    
@@ -160,8 +160,18 @@ Timbre-based Instrument Modeling for Balanced Recognition and Estimation.
         - Use Case: Input for CNNs in classification tasks.
         - Visual: Looks like a heatmap with time (x-axis) and frequency (y-axis).
 
-6) Set up and configure the modeling algorithm (e.g., classifier or regressor). For sure we need a classification model and not a regression model. CNN 2D is the best. Note that eith CNN the NMF is not needed. Indeed in traditional audio processing, **Non-negative Matrix Factorization (NMF)** is a popular method for **source separation**, where a spectrogram is decomposed into spectral templates and activation patterns. However, with the advent of **deep learning**, especially **Convolutional Neural Networks (CNNs)**, the need for hand-crafted techniques like NMF has significantly reduced. CNNs **learn directly from data** without requiring explicit factorization.  They can model **non-linear relationships** and **context** in time and frequency. With large datasets, CNNs outperform NMF in **source separation accuracy**. End-to-end models (e.g., waveform in → separated sources out) are now common. When Is NMF Still Useful?
-    - In **low-data scenarios**
-    - For **interpretable models**
-    - When computational resources are limited
-    - As a **baseline** or **preprocessing** method for hybrid models
+6) Set up and configure the modeling algorithm (e.g., classifier or regressor). For sure we need a classification model and not a regression model. CNN 2D is the best. Some notes on CNN properties:
+    - The convolutional layer applies multiple filters (each defined by a kernel) to an input signal to extract local patterns. The filter is applied to the input via convolution. The function that represents the filter is called a kernel, and its size (or length) determines the width of the local region it examines at each step.
+    - The pooling layer applies a downsampling technich to reduce the size of feature maps while retaining the most important information.
+    - A Fully Connected (FC) layer — also known as a dense layer — is a standard layer in neural networks where every input neuron is connected to every output neuron.
+
+    Observe that to apply this CNN method to a Mel spectrogram must be used a 2D method becouse the input has 2 dimensions. Also note that with CNN the NMF is not usually needed. Indeed in traditional audio processing, **Non-negative Matrix Factorization (NMF)** is a popular method for **source separation**, where a spectrogram is decomposed into spectral templates and activation patterns. However, with the advent of **deep learning**, especially **Convolutional Neural Networks (CNNs)**, the need for hand-crafted techniques like NMF has significantly reduced. CNNs **learn directly from data** without requiring explicit factorization.  They can model **non-linear relationships** and **context** in time and frequency. With large datasets, CNNs outperform NMF in **source separation accuracy**. End-to-end models (e.g., waveform in → separated sources out) are now common. When Is NMF Still Useful? In low-data scenarios, for interpretable models, when computational resources are limited and as a **baseline** or **preprocessing** method for hybrid models
+
+7) Train the model using the training set. Plot model accuracy and model loss over augmenting epochs
+
+8) Evaluate model performance using the test set. Use Test and Validation confusion matrix and the classification report for the test set.
+
+9) Perform an error analysis to identify possible improvements.
+    - Confusion trends: Certain instrument pairs were frequently confused (e.g., cello vs. bass), likely due to spectral similarity.
+    - Dataset imbalance: Classes with fewer training samples showed lower accuracy, suggesting a need for resampling or augmentation.
+    - Overfitting signs: Regularization techniques like dropout or L2 weight decay may be applied if validation performance lags behind training.
