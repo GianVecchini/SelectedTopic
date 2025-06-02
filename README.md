@@ -3,7 +3,9 @@
 Timbre-based Instrument Modeling for Balanced Recognition and Estimation.
 
 [DATABASE DOWNLOAD](https://www.myqnapcloud.com/share/603e551inp2m2685r841a8ac_e30i116565pl2ooq0t1tu65z94cbhh47?session_id=2%7C1%3A0%7C10%3A1748440377%7C19%3Asession_portal_goto%7C48%3ANTQ3OTI0ZTUtODBkMS00ZmE2LTgyYTUtNWUxNGRmNjdmMjdh%7C33ba169b2ba8b91fb410ddde9566d7cb6e28bab6c04f5a7f53b6be8850175587#!/home)
+
 ## Some notes from the corse that could be helpfull
+
 1) The most important features we have seen during the lessons are:
     - Mel Spectrogram. A time–frequency representation of the audio signal where the frequency axis is transformed to the Mel scale, which aligns with human auditory perception. It represents how the spectral content of a sound evolves over time, emphasizing frequencies most relevant to human hearing.
         - Strengths: Captures both timbre and temporal patterns.
@@ -55,19 +57,19 @@ Timbre-based Instrument Modeling for Balanced Recognition and Estimation.
         - \( H \): Activation matrix (\( K \times T \)) – contains **temporal activations**  
         - \( K \): Number of components (rank of the decomposition)  
     Can be used for source separation to Separate a mixture of sources (e.g., vocals and instruments) using learned spectral patterns and their activations.
-2) The most important models seen in class are: 
+2) The most important models seen in class are:
     - Classical Machine Learning Models
         1. Support Vector Machine (SVM)
             - **Description**: Finds the optimal hyperplane to separate feature vectors of different classes.
             - **Use Case**: Best for MFCCs + spectral features in binary or multi-class classification.
             - **Limitations**: Does not natively support multi-label tasks.
 
-        3. Random Forest (RF)
+        2. Random Forest (RF)
             - **Description**: An ensemble of decision trees; robust to noise and non-linear patterns.
             - **Use Case**: Effective with MFCC + statistical features.
             - **Files**: Introduced in Lab 2.
 
-        4. KMeans Clustering
+        3. KMeans Clustering
             - **Description**: Unsupervised clustering method for exploring structure in feature space.
             - **Use Case**: Grouping audio clips based on MFCCs, spectral features (no labels required).
             - **Files**: Used in Lab 1.
@@ -130,7 +132,7 @@ Timbre-based Instrument Modeling for Balanced Recognition and Estimation.
             F1 = 2 \cdot \frac{\text{Precision} \cdot \text{Recall}}{\text{Precision} + \text{Recall}}
             $$
             - *Support*: number of samples for each class.
-        -  Averaging in Multiclass Scenarios
+        - Averaging in Multiclass Scenarios
             - **Micro-Averaging**:
                 - Aggregates TP, FP, FN **globally**.
                 - Dominated by **frequent classes**.
@@ -149,11 +151,12 @@ Timbre-based Instrument Modeling for Balanced Recognition and Estimation.
     - **ROC Curve (Receiver Operating Characteristic)**: plots the True Positive Rate (Recall) against the False Positive Rate (FPR)for various threshold values. Good for binary classification problems and not easily generalizable to multiclass tasks.
 
 ## Pipeline
+
 1) Import audio data. Use panda to prepare the dataframe.
 2) Import associated annotations. Use df["label"]. Check if the dataset is balanced by plotting the histogram containing the number of samples for each class.
 3) Normalize the data as needed:
     - Low pass filter
-    - Apply a windowing    
+    - Apply a windowing
 4) Split the data into training (Fit model parameters. More training data → Better model performance.), validation (optional: Tune hyperparameters, prevent overfitting. More validation data → More accurate performance estimates.), and test sets (Final unbiased evaluation  ). 70%, 15%, 15% or 70%, 20%, 10%.
 5) The best feature for thi stask is the *Mel Spectrogram*. A time–frequency representation of the audio signal where the frequency axis is transformed to the Mel scale, which aligns with human auditory perception. It represents how the spectral content of a sound evolves over time, emphasizing frequencies most relevant to human hearing.
         - Strengths: Captures both timbre and temporal patterns.
